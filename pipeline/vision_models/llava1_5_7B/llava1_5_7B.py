@@ -3,7 +3,7 @@ from transformers import pipeline
 pipe = pipeline("image-text-to-text", model="llava-hf/llava-1.5-7b-hf", use_fast=True)
 
 
-def evaluate(image, prompt):
+def identify_action(image, prompt):
     messages = [
     {
       "role": "user",
@@ -14,8 +14,9 @@ def evaluate(image, prompt):
     },
     ]
     out = pipe(text=messages, max_new_tokens=5)
-    print(out[0]['generated_text'][1]['content'])
+    print("model prediction = ",out[0]['generated_text'][1]['content'])
+    return out[0]['generated_text'][1]['content']
 
     
 if __name__ == "__main__":
-    evaluate(image)
+    identify_action(image='', prompt='')

@@ -69,8 +69,8 @@ def main():
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
 
-    logging.info(f"Starting pipeline for model: {model_name}")
-    class_embedding_matrix = get_class_embedding_matrix(f"datatset/{dataset_name}/{dataset_name}_embeddings.json")
+    logging.info(f"Starting pipeline for model: {model_name} and {dataset_name}")
+    class_embedding_matrix, class_embedding_mapping = get_class_embedding_matrix(f"dataset/{dataset_name}/{dataset_name}_embeddings.json")
     # Load image from data_loader
     #image = data_loader.select_image()  # TODO, replace with image filename or with some script or pipeline itself takes care of going through a list of images and its ground truth
     image = 'data_loader/frame_00060.jpg'
@@ -88,7 +88,7 @@ def main():
     logging.info(f"Model output: {model_output}")
 
     # Evaluate output string using similarity
-    similarity_score = get_predicted_class(google_api_key, model_output, class_embedding_matrix)
+    similarity_score = get_predicted_class(google_api_key, model_output, class_embedding_matrix, class_embedding_mapping)
     logging.info(f"Cosine similarity score: {similarity_score}")
     exit()
     # Write statistics to CSV file
