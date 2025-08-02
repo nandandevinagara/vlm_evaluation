@@ -25,10 +25,7 @@ from datetime import datetime
 from helper import load_model_module, get_prompt, get_timestamped_filename
 
 # from data_loader import data_loader  # Assuming a method inside this for image selection
-from output_evaluation.similarity_finder_using_gemini import (
-    get_predicted_class,
-    get_class_embedding_matrix,
-)
+from output_evaluation.similarity_finder_using_gemini import SimilarityFinder
 
 
 def main():
@@ -64,9 +61,13 @@ def main():
     )
 
     logging.info(f"Starting pipeline for model: {model_name} and {dataset_name}")
-    class_embedding_matrix, class_embedding_mapping = get_class_embedding_matrix(
-        f"dataset/{dataset_name}/{dataset_name}_embeddings.json"
+
+    action_class_matcher = SimilarityFinder(
+        f"dataset/{dataset_name}/{dataset_name}_embeddings.json", google_api_key
     )
+    # class_embedding_matrix, class_embedding_mapping = get_class_embedding_matrix(
+    #    f"dataset/{dataset_name}/{dataset_name}_embeddings.json"
+    # )
     stats_filename = get_timestamped_filename(
         "statistics", model_name, dataset_name, "csv"
     )
@@ -105,11 +106,8 @@ def main():
         if image == "data_loader/example4.jpeg":
             model_output = "Jump"
         # Evaluate output string using similarity
-        best_matched_class, similarity_score = get_predicted_class(
-            google_api_key,
-            model_output,
-            class_embedding_matrix,
-            class_embedding_mapping,
+        best_matched_class, similarity_score = action_class_matcher.get_predicted_class(
+            model_output
         )
         logging.info(f"Cosine similarity score: {similarity_score}\n")
         # Write statistics to CSV file
