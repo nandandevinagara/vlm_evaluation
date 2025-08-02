@@ -73,7 +73,7 @@ def main():
     )
     statistics_file = open(stats_filename, "w")
     statistics_file.write(
-        "image, ground_truth, model_output,best_matched_class , similarity_score\n"
+        "image, ground_truth, model_output,best_matched_class , similarity_score, result\n"
     )
     # Load image from data_loader
     # image = data_loader.select_image()  # TODO, replace with image filename or with some script or pipeline itself takes care of going through a list of images and its ground truth
@@ -106,15 +106,21 @@ def main():
         if image == "data_loader/example4.jpeg":
             model_output = "Jump"
         # Evaluate output string using similarity
-        best_matched_class, similarity_score = action_class_matcher.get_predicted_class(
+        # get all possible classes here instead of a sinle class
+        best_matched_class, similarity_score = action_class_matcher.get_matching_class(
             model_output
         )
         logging.info(f"Cosine similarity score: {similarity_score}\n")
+        result = action_class_matcher.compute_topk_accuracy(
+            ground_truth_dict[image], model_output, 1
+        )
+        print("result = ", result)
         # Write statistics to CSV file
         # maybe you can write the inference time instead of date time
         statistics_file.write(
-            f"{image},{ground_truth_dict[image]}, {model_output}, {best_matched_class} ,{similarity_score}\n"
+            f"{image},{ground_truth_dict[image]}, {model_output}, {best_matched_class} ,{similarity_score}, {result }\n"
         )
+
         # compute_topk_accuracy(ground_truth, similarities, class_embedding_mapping , k=3)
         logging.info(f"Statistics written to: {stats_filename}")
 
