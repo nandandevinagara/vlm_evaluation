@@ -65,15 +65,12 @@ def main():
     action_class_matcher = SimilarityFinder(
         f"dataset/{dataset_name}/{dataset_name}_embeddings.json", google_api_key
     )
-    # class_embedding_matrix, class_embedding_mapping = get_class_embedding_matrix(
-    #    f"dataset/{dataset_name}/{dataset_name}_embeddings.json"
-    # )
     stats_filename = get_timestamped_filename(
         "statistics", model_name, dataset_name, "csv"
     )
     statistics_file = open(stats_filename, "w")
     statistics_file.write(
-        "image, ground_truth, model_output,best_matched_class , similarity_score, result\n"
+        "image; ground_truth; model_output;top_k_classes ; similarity_score; top-1; top-3\n"
     )
     # Load image from data_loader
     # image = data_loader.select_image()  # TODO, replace with image filename or with some script or pipeline itself takes care of going through a list of images and its ground truth
@@ -103,25 +100,26 @@ def main():
         logging.info(f"Image selected for evaluation: {image}")
         model_output = identify_action(image, prompt)
         logging.info(f"Model output: {model_output}")
-        if image == "data_loader/example4.jpeg":
-            model_output = "Jump"
+
         # Evaluate output string using similarity
         # get all possible classes here instead of a sinle class
-        best_matched_class, similarity_score = action_class_matcher.get_matching_class(
-            model_output
+        top_k_classes, similarity_score = action_class_matcher.get_matching_classes(
+            model_output, k=3
         )
         logging.info(f"Cosine similarity score: {similarity_score}\n")
-        result = action_class_matcher.compute_topk_accuracy(
-            ground_truth_dict[image], model_output, 1
+
+        # the following shall provide if the class is in the top-k classes or not
+        top1_result = action_class_matcher.get_topk_result(
+            ground_truth_dict[image], top_k_classes, 1
         )
-        print("result = ", result)
+        top3_result = action_class_matcher.get_topk_result(
+            ground_truth_dict[image], top_k_classes, 3
+        )
         # Write statistics to CSV file
         # maybe you can write the inference time instead of date time
         statistics_file.write(
-            f"{image},{ground_truth_dict[image]}, {model_output}, {best_matched_class} ,{similarity_score}, {result }\n"
+            f"{image};{ground_truth_dict[image]}; {model_output}; {top_k_classes} ;{similarity_score}; {top1_result }; {top3_result}\n"
         )
-
-        # compute_topk_accuracy(ground_truth, similarities, class_embedding_mapping , k=3)
         logging.info(f"Statistics written to: {stats_filename}")
 
 
