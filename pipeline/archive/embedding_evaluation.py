@@ -12,17 +12,123 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 # UCF101 class labels (you can paste the full list here)
-ucf101_labels = ["ApplyEyeMakeup", "ApplyLipstick", "Archery", "BabyCrawling", "BalanceBeam", "BandMarching", "BaseballPitch", "Basketball", "BasketballDunk", "BenchPress", "Biking", "Billiards", "BlowDryHair", "BlowingCandles", "BodyWeightSquats", "Bowling", "BoxingPunchingBag", "BoxingSpeedBag", "BreastStroke", "BrushingTeeth", "CleanAndJerk", "CliffDiving", "CricketBowling", "CricketShot", "CuttingInKitchen", "Diving", "Drumming", "Fencing", "FieldHockeyPenalty", "FloorGymnastics", "FrisbeeCatch", "FrontCrawl", "GolfSwing", "Haircut", "HammerThrow", "Hammering", "HandstandPushups", "HandstandWalking", "HeadMassage", "HighJump", "HorseRace", "HorseRiding", "HulaHoop", "IceDancing", "JavelinThrow", "JugglingBalls", "JumpRope", "JumpingJack", "Kayaking", "Knitting", "LongJump", "Lunges", "MilitaryParade", "Mixing", "MoppingFloor", "Nunchucks", "ParallelBars", "PlayingCello", "PlayingDaf", "PlayingDhol", "PlayingFlute", "PlayingGuitar", "PlayingPiano", "PlayingSitar", "PlayingTabla", "PlayingViolin", "PizzaTossing", "PoleVault", "PommelHorse", "PullUps", "Punch", "PushUps", "Rafting", "RockClimbingIndoor", "RopeClimbing", "Rowing", "SalsaSpin", "ShavingBeard", "Shotput", "Skiing", "Skijet", "SkateBoarding", "SkyDiving", "SoccerJuggling", "SoccerPenalty", "StillRings", "SumoWrestling", "Surfing", "Swing", "TableTennisShot", "TaiChi", "TennisSwing", "ThrowDiscus", "TrampolineJumping", "Typing", "UnevenBars", "VolleyballSpiking", "WalkingWithDog", "WallPushups", "WritingOnBoard", "YoYo"]
+ucf101_labels = [
+    "ApplyEyeMakeup",
+    "ApplyLipstick",
+    "Archery",
+    "BabyCrawling",
+    "BalanceBeam",
+    "BandMarching",
+    "BaseballPitch",
+    "Basketball",
+    "BasketballDunk",
+    "BenchPress",
+    "Biking",
+    "Billiards",
+    "BlowDryHair",
+    "BlowingCandles",
+    "BodyWeightSquats",
+    "Bowling",
+    "BoxingPunchingBag",
+    "BoxingSpeedBag",
+    "BreastStroke",
+    "BrushingTeeth",
+    "CleanAndJerk",
+    "CliffDiving",
+    "CricketBowling",
+    "CricketShot",
+    "CuttingInKitchen",
+    "Diving",
+    "Drumming",
+    "Fencing",
+    "FieldHockeyPenalty",
+    "FloorGymnastics",
+    "FrisbeeCatch",
+    "FrontCrawl",
+    "GolfSwing",
+    "Haircut",
+    "HammerThrow",
+    "Hammering",
+    "HandstandPushups",
+    "HandstandWalking",
+    "HeadMassage",
+    "HighJump",
+    "HorseRace",
+    "HorseRiding",
+    "HulaHoop",
+    "IceDancing",
+    "JavelinThrow",
+    "JugglingBalls",
+    "JumpRope",
+    "JumpingJack",
+    "Kayaking",
+    "Knitting",
+    "LongJump",
+    "Lunges",
+    "MilitaryParade",
+    "Mixing",
+    "MoppingFloor",
+    "Nunchucks",
+    "ParallelBars",
+    "PlayingCello",
+    "PlayingDaf",
+    "PlayingDhol",
+    "PlayingFlute",
+    "PlayingGuitar",
+    "PlayingPiano",
+    "PlayingSitar",
+    "PlayingTabla",
+    "PlayingViolin",
+    "PizzaTossing",
+    "PoleVault",
+    "PommelHorse",
+    "PullUps",
+    "Punch",
+    "PushUps",
+    "Rafting",
+    "RockClimbingIndoor",
+    "RopeClimbing",
+    "Rowing",
+    "SalsaSpin",
+    "ShavingBeard",
+    "Shotput",
+    "Skiing",
+    "Skijet",
+    "SkateBoarding",
+    "SkyDiving",
+    "SoccerJuggling",
+    "SoccerPenalty",
+    "StillRings",
+    "SumoWrestling",
+    "Surfing",
+    "Swing",
+    "TableTennisShot",
+    "TaiChi",
+    "TennisSwing",
+    "ThrowDiscus",
+    "TrampolineJumping",
+    "Typing",
+    "UnevenBars",
+    "VolleyballSpiking",
+    "WalkingWithDog",
+    "WallPushups",
+    "WritingOnBoard",
+    "YoYo",
+]
 
 # Model output (you'd replace this with your actual output from the VLM)
 vlm_output = "golf"  # Let's say the model outputted this
 
+
 def get_bert_embedding(text):
-    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True).to(device)
+    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True).to(
+        device
+    )
     with torch.no_grad():
         outputs = model(**inputs)
         # Use CLS token representation as sentence embedding
         return outputs.last_hidden_state[:, 0, :].squeeze(0)
+
 
 # Get embedding for the model output
 output_emb = get_bert_embedding(vlm_output)

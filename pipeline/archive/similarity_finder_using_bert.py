@@ -22,12 +22,14 @@ model.eval()
 label_names = list(class_embeddings.keys())
 embedding_matrix = np.array([class_embeddings[label] for label in label_names])
 
+
 # Function to get embedding of a prediction
 def get_text_embedding(text, tokenizer, model):
     inputs = tokenizer(text, return_tensors="pt")
     with torch.no_grad():
         outputs = model(**inputs)
         return outputs.last_hidden_state[0][0].numpy()
+
 
 # Example predicted label (from model)
 predicted_label = sys.argv[1]

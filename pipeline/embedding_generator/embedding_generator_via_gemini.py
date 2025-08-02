@@ -8,26 +8,30 @@ import numpy as np
 from google import genai
 from google.genai import types
 
-client = genai.Client(api_key='AIzaSyCG4RITfY0CIiHWiAxCfHzgIdZNqw1WCCU')
+client = genai.Client(api_key="AIzaSyCG4RITfY0CIiHWiAxCfHzgIdZNqw1WCCU")
 
 # Create a dummy JSON file for demonstration purposes
 json_filename = sys.argv[1]
 
 # Read the JSON file
 try:
-    with open(json_filename, 'r') as f:
+    with open(json_filename, "r") as f:
         data = json.load(f)
     # Fetch the 'class_list' field and store it in a local list
-    if 'class_list' in data:
-        class_list_local = data['class_list']
+    if "class_list" in data:
+        class_list_local = data["class_list"]
         print(f"The 'class_list' field successfully extracted: {class_list_local}")
     else:
         print("The 'class_list' field was not found in the JSON file.")
 
 except FileNotFoundError:
-    print("Error: 'data.json' not found. Please ensure the file exists in the same directory.")
+    print(
+        "Error: 'data.json' not found. Please ensure the file exists in the same directory."
+    )
 except json.JSONDecodeError:
-    print("Error: Could not decode JSON from 'data.json'. Please ensure it's a valid JSON file.")
+    print(
+        "Error: Could not decode JSON from 'data.json'. Please ensure it's a valid JSON file."
+    )
 except Exception as e:
     print(f"An unexpected error occurred: {e}")
 
@@ -44,10 +48,12 @@ start = 0
 for i in range(3):
     end = start + sizes[i]
     temp_list = [
-        np.array(e.values) for e in client.models.embed_content(
+        np.array(e.values)
+        for e in client.models.embed_content(
             model="gemini-embedding-001",
-            contents=class_list_local[start:end], 
-            config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY")).embeddings
+            contents=class_list_local[start:end],
+            config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY"),
+        ).embeddings
     ]
     class_embeddings.extend(temp_list)
     start = end
@@ -68,13 +74,12 @@ serializable_dict = {
 ### print(len(serializable_embeddings_list[0]))
 ### print(f"Type of serializable_list: {type(serializable_embeddings_list)}")
 ### print(f"Type of first element: {type(serializable_embeddings_list[0])}")
-### 
+###
 # Dump the serializable list to a JSON file
 output_filename = sys.argv[2]
 try:
-    with open(output_filename, 'w') as f:
-        json.dump(serializable_dict, f, indent=4) # indent for pretty printing
+    with open(output_filename, "w") as f:
+        json.dump(serializable_dict, f, indent=4)  # indent for pretty printing
     print(f"\nSuccessfully dumped data to '{output_filename}'")
 except Exception as e:
     print(f"Error dumping to JSON: {e}")
-
