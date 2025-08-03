@@ -1,5 +1,6 @@
 from google import genai
 from google.genai import types
+from google.api_core.exceptions import ResourceExhausted
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import sys
@@ -30,15 +31,22 @@ class SimilarityFinder:
 
     def get_matching_classes(self, model_output, k=3):
         # Get embedding for the model output
-        input_string_embedding = np.array(
-            self.client.models.embed_content(
-                model="gemini-embedding-001",
-                contents=model_output,
-                config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY"),
-            )
-            .embeddings[0]
-            .values
-        ).reshape(1, -1)
+        while True: # Loop indefinitely until successful or a non-retryable error occurs
+            try:
+                input_string_embedding = np.array(
+                    self.client.models.embed_content(
+                        model="gemini-embedding-001",
+                        contents=model_output,
+                        config=types.EmbedContentConfig(task_type="SEMANTIC_SIMILARITY"),
+                    )
+                    .embeddings[0]
+                    .values
+                ).reshape(1, -1)
+                break
+            except ResourceExhausted as e:
+                print("waiting for 3 mins")
+                time.sleep(180) # Wait for 3 minutes (180 seconds)
+            
 
         # Compute cosine similarities
         self.similarities = cosine_similarity(
