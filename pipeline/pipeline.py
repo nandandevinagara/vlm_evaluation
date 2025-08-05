@@ -32,7 +32,7 @@ from helper import (
 import time
 
 # from data_loader import data_loader  # Assuming a method inside this for image selection
-from output_evaluation.similarity_finder_using_gemini import SimilarityFinder
+from output_evaluation.similarity_finder_using_linq_embed_mistral import SimilarityFinder
 
 
 def main():
@@ -43,17 +43,10 @@ def main():
     parser.add_argument(
         "--dataset", type=str, required=True, help="Name of the dataset folder"
     )
-    parser.add_argument(
-        "--google_api_key",
-        type=str,
-        default="AIzaSyCG4RITfY0CIiHWiAxCfHzgIdZNqw1WCCU",
-        help="Google API",
-    )
     args = parser.parse_args()
 
     model_name = args.model
     dataset_name = args.dataset
-    google_api_key = args.google_api_key
 
     if model_name == "llava1_5_7B":
         from vision_models.llava1_5_7B.llava1_5_7B import identify_action
@@ -70,7 +63,7 @@ def main():
     logging.info(f"Starting pipeline for model: {model_name} and {dataset_name}")
 
     action_class_matcher = SimilarityFinder(
-        f"dataset/{dataset_name}/{dataset_name}_embeddings.json", google_api_key
+        f"dataset/{dataset_name}/{dataset_name}_embeddings.json"
     )
     stats_filename = get_timestamped_filename(
         "statistics", model_name, dataset_name, "csv"
@@ -91,7 +84,7 @@ def main():
     ##    "data_loader/example5.jpeg",
     ##]
     images_list = get_png_files_in_folder("data_loader/ucf101")
-    images_list = images_list[:20]
+    images_list = images_list[:2]
     print(images_list)
 
     # I need to read the following from a file
