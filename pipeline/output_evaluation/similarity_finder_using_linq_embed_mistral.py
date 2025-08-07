@@ -14,6 +14,7 @@ class_embedding_mapping = {}
 class SimilarityFinder:
     def __init__(self, dataset_json_filename):
         self.dataset_json_filename = dataset_json_filename
+        print('dataset file name ', dataset_json_filename)
         self.class_embedding_matrix, self.class_embedding_mapping = (
             self.load_class_embeddings()
         )
@@ -74,6 +75,8 @@ class SimilarityFinder:
 
         # Compute cosine similarity between query and all class embeddings
         # self.similarities = torch.matmul(query_embedding, self.class_embeddings.T).squeeze(0)
+        #print('embeddings shape is ', embeddings_of_a_word.shape)
+        #print('embeddings shape is ', self.embeddings_tensor.shape)
         self.similarities = (embeddings_of_a_word @ self.embeddings_tensor.T) * 100
         print(self.similarities)
 

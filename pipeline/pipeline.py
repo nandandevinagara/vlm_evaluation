@@ -67,7 +67,7 @@ def main():
     ##    "data_loader/example5.jpeg",
     ##]
     images_list = get_png_files_in_folder("data_loader/ucf101")
-    # images_list = images_list[3388:3395]
+    images_list = images_list[3388:3395]
     print("images_list ", images_list)
     ground_truth_dict = get_filename_class_mapping(
         f"dataset/{dataset_name}/{dataset_name}_annotations.txt"
