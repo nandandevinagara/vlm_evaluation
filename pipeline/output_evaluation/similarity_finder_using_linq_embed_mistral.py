@@ -79,7 +79,7 @@ class SimilarityFinder:
         return top_k_classes, top_k_similarities
 
     def get_topk_result(self, ground_truth, top_k_classes, k=3):
-        if ground_truth in top_k_classes:
+        if ground_truth in top_k_classes[:k]:
             return True
         else:
             return False

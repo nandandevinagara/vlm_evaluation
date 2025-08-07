@@ -28,6 +28,7 @@ from helper import (
     get_timestamped_filename,
     get_filename_class_mapping,
     get_png_files_in_folder,
+    shuffle_class_name_in_prompt
 )
 import time
 
@@ -84,7 +85,7 @@ def main():
     ##    "data_loader/example5.jpeg",
     ##]
     images_list = get_png_files_in_folder("data_loader/ucf101")
-    images_list = images_list[:2]
+    images_list = images_list[575:576]
     print(images_list)
 
     # I need to read the following from a file
@@ -111,6 +112,8 @@ def main():
         # the
         with open(stats_filename, "a") as statistics_file:
             logging.info(f"Image selected for evaluation: data_loader/ucf101/{image}")
+            #the model chooses the first class most of the times, hence shuffling the class list to avoid 'Class list order bias'
+            prompt = shuffle_class_name_in_prompt(prompt)
             model_output = identify_action(f"data_loader/ucf101/{image}", prompt)
             logging.info(f"Model output: {model_output}")
 
@@ -120,7 +123,7 @@ def main():
                 model_output, k=3
             )
             logging.info(f"Cosine similarity score: {similarity_score}\n")
-
+            print('top_k_classes ', top_k_classes)
             # the following shall provide if the class is in the top-k classes or not
             top1_result = action_class_matcher.get_topk_result(
                 ground_truth_dict[image], top_k_classes, 1
@@ -128,6 +131,7 @@ def main():
             top3_result = action_class_matcher.get_topk_result(
                 ground_truth_dict[image], top_k_classes, 3
             )
+            print('result ', top1_result, top3_result)
             # Write statistics to CSV file
             # maybe you can write the inference time instead of date time
             # with open(stats_filename, "a") as statistics_file:

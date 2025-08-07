@@ -1,6 +1,7 @@
 import os
 import importlib.util
 from datetime import datetime
+import random
 
 
 def load_model_module(model_name):
@@ -82,3 +83,45 @@ def get_png_files_in_folder(folder_path):
         return []
 
     return sorted(png_files)
+
+
+def shuffle_list(lst):
+    """Shuffles the input list in-place and returns it."""
+    random.shuffle(lst)
+    return lst
+
+import time
+
+def shuffle_class_name_in_prompt(input_string):
+    """
+    Splits a string, processes the second part, and returns a new concatenated string.
+
+    Args:
+        input_string: A string in the format "first_element: second_element".
+
+    Returns:
+        A concatenated string of the first element and the processed second element.
+    """
+    # Split the input string by ':' and take the first two elements.
+    # The split() method handles cases where there might be more than one ':'.
+    parts = input_string.split(':', 1)
+    
+    # Ensure there are at least two parts to avoid an IndexError.
+    if len(parts) < 2:
+        return "Invalid input format. Expected 'first:second'."
+    
+    first_element = parts[0].strip()
+    second_element = parts[1].strip()
+    
+    # Split the second element by space. The split() method without arguments
+    # handles multiple spaces between words and leading/trailing spaces.
+    words = second_element.split()
+    
+    words = shuffle_list(words)
+    
+    # Join the list of words back into a single string.
+    processed_string = "".join(words)
+    
+    # Concatenate the first element and the processed second element.
+    return first_element + processed_string
+
