@@ -2,6 +2,7 @@ import os
 import importlib.util
 from datetime import datetime
 import random
+import logging
 
 
 def load_model_module(model_name):
@@ -90,7 +91,6 @@ def shuffle_list(lst):
     random.shuffle(lst)
     return lst
 
-import time
 
 def shuffle_class_name_in_prompt(input_string):
     """
@@ -104,24 +104,43 @@ def shuffle_class_name_in_prompt(input_string):
     """
     # Split the input string by ':' and take the first two elements.
     # The split() method handles cases where there might be more than one ':'.
-    parts = input_string.split(':', 1)
-    
+    parts = input_string.split(":", 1)
+
     # Ensure there are at least two parts to avoid an IndexError.
     if len(parts) < 2:
         return "Invalid input format. Expected 'first:second'."
-    
+
     first_element = parts[0].strip()
     second_element = parts[1].strip()
-    
+
     # Split the second element by space. The split() method without arguments
     # handles multiple spaces between words and leading/trailing spaces.
     words = second_element.split()
-    
-    words = shuffle_list(words)
-    
-    # Join the list of words back into a single string.
-    processed_string = "".join(words)
-    
-    # Concatenate the first element and the processed second element.
-    return first_element + processed_string
 
+    words = shuffle_list(words)
+
+    # Join the list of words back into a single string.
+    processed_string = " ".join(words)
+
+    # Concatenate the first element and the processed second element.
+    return first_element + ": " + processed_string
+
+
+def create_log_csv_files(model_name, dataset_name):
+    # Setup logging
+    log_filename = get_timestamped_filename("log", model_name, dataset_name, "log")
+    logging.basicConfig(
+        filename=log_filename,
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
+
+    stats_filename = get_timestamped_filename(
+        "statistics", model_name, dataset_name, "csv"
+    )
+    with open(stats_filename, "w") as statistics_file:
+        statistics_file.write(
+            "image; ground_truth; model_output;top_k_classes ; similarity_score; top-1; top-3\n"
+        )
+
+    return stats_filename
