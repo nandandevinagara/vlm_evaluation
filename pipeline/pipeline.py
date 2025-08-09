@@ -67,8 +67,8 @@ def main():
     ##    "data_loader/example5.jpeg",
     ##]
     images_list = get_png_files_in_folder("data_loader/ucf101")
-    images_list = images_list[3388:3395]
-    print("images_list ", images_list)
+    #images_list = images_list[5781:5785]
+    #print("images_list ", images_list)
     ground_truth_dict = get_filename_class_mapping(
         f"dataset/{dataset_name}/{dataset_name}_annotations.txt"
     )
@@ -98,15 +98,15 @@ def main():
             top1_result = action_class_matcher.get_topk_result(
                 ground_truth_dict[image], top_k_classes, 1
             )
-            top3_result = action_class_matcher.get_topk_result(
-                ground_truth_dict[image], top_k_classes, 3
+            top5_result = action_class_matcher.get_topk_result(
+                ground_truth_dict[image], top_k_classes, 5
             )
-            print("result ", top1_result, top3_result)
+            print("result ", top1_result, top5_result)
             # Write statistics to CSV file
             # maybe you can write the inference time instead of date time
             # with open(stats_filename, "a") as statistics_file:
             statistics_file.write(
-                f"{image};{ground_truth_dict[image]}; {model_output}; {top_k_classes} ;{similarity_score}; {top1_result }; {top3_result}\n"
+                f"{image};{ground_truth_dict[image]}; {model_output}; {top_k_classes} ;{similarity_score}; {top1_result }; {top5_result}\n"
             )
             logging.info(f"Statistics written to: {stats_filename}")
 

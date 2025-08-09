@@ -140,7 +140,7 @@ def create_log_csv_files(model_name, dataset_name):
     )
     with open(stats_filename, "w") as statistics_file:
         statistics_file.write(
-            "image; ground_truth; model_output;top_k_classes ; similarity_score; top-1; top-3\n"
+            "image; ground_truth; model_output;top_k_classes ; similarity_score; top-1; top-5\n"
         )
 
     return stats_filename
